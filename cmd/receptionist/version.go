@@ -1,9 +1,9 @@
 package main
 
 import (
-	"git.cafebazaar.ir/arya/baargir"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"gitlab.com/kanalbot/receptionist"
 )
 
 var versionCmd = &cobra.Command{
@@ -19,7 +19,7 @@ func init() {
 }
 
 func logVersion() {
-	logrus.Info("version   > ", baargir.Version)
-	logrus.Info("buildtime > ", baargir.BuildTime)
-	logrus.Info("commit    > ", baargir.Commit)
+	logrus.Info("version   > ", receptionist.Version)
+	logrus.Info("buildtime > ", receptionist.BuildTime)
+	logrus.Info("commit    > ", receptionist.Commit)
 }

@@ -1,17 +1,15 @@
 package receptionist
 
 import (
-	"os"
 	"time"
 )
 
 var (
-	Version       string
-	Commit        string
-	BuildTime     string
-	RootDirectory string
-	Title         string
-	StartTime     time.Time
+	Version   string
+	Commit    string
+	BuildTime string
+	Title     string
+	StartTime time.Time
 )
 
 func init() {
@@ -23,9 +21,6 @@ func init() {
 	}
 	if BuildTime == "" {
 		BuildTime = "unknown"
-	}
-	if RootDirectory == "" {
-		RootDirectory = os.Getenv("HOME") + "/receptionist"
 	}
 	if Title == "" {
 		Title = "receptionist"
