@@ -1,0 +1,7 @@
+debug: true
+bot:
+  telegram:
+    debug: true
+    token: "563000279:AAEmDxFLenTPNQuPiTlyMzX02sCgD79aPSQ"
+    updater-timeout: 40
+    session-timeout: 20

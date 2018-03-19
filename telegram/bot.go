@@ -4,6 +4,11 @@ import (
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/kanalbot/receptionist/configuration"
+	"gitlab.com/kanalbot/receptionist/ui/text"
+)
+
+var (
+	bot *miyanbor.Bot
 )
 
 // InitBot starts telegram bot's updater
@@ -13,7 +18,8 @@ func InitBot() {
 	botSessionTimeout := configuration.GetInstance().GetInt("bot.telegram.session-timeout")
 	botUpdaterTimeout := configuration.GetInstance().GetInt("bot.telegram.updater-timeout")
 
-	bot, err := miyanbor.NewBot(botToken, botDebug, botSessionTimeout)
+	var err error
+	bot, err = miyanbor.NewBot(botToken, botDebug, botSessionTimeout)
 	if err != nil {
 		logrus.WithError(err).Fatalf("can't init bot")
 	}
@@ -28,8 +34,8 @@ func setCallbacks(bot *miyanbor.Bot) {
 	bot.SetSessionStartCallbackHandler(sessionStartHandler)
 	bot.SetFallbackCallbackHandler(unknownMessageHandler)
 
-	bot.AddCommandHandler("^newmessage$", newMessageCommandHandler)
-	bot.AddCommandHandler("^kanal$", kanalCommandHandler)
-	bot.AddCommandHandler("^feedback$", feedbackCommandHandler)
-	bot.AddCommandHandler("^help$", helpCommandHandler)
+	bot.AddCommandHandler(text.NewMessageCommandRegex, newMessageCommandHandler)
+	bot.AddCommandHandler(text.KanalCommandRegex, kanalCommandHandler)
+	bot.AddCommandHandler(text.FeedbackCommandRegex, feedbackCommandHandler)
+	bot.AddCommandHandler(text.HelpCommandRegex, helpCommandHandler)
 }

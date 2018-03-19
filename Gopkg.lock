@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/aryahadii/miyanbor"
   packages = ["."]
-  revision = "ecc91114305c4d0e5b95b35eed2716e572615c69"
+  revision = "6bd32f1afc849664cab345d5cb56c4bb634b7c19"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"

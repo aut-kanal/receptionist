@@ -3,6 +3,7 @@ package telegram
 import (
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
+	"gitlab.com/kanalbot/receptionist/ui/text"
 )
 
 func sessionStartHandler(userSession *miyanbor.UserSession, input interface{}) {
@@ -19,6 +20,7 @@ func newMessageCommandHandler(userSession *miyanbor.UserSession, matches interfa
 
 func kanalCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
 	logrus.Debugf("kanal command received")
+	bot.SendStringMessage(text.MsgKanalLink, userSession.GetChatID())
 }
 
 func feedbackCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
@@ -27,4 +29,5 @@ func feedbackCommandHandler(userSession *miyanbor.UserSession, matches interface
 
 func helpCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
 	logrus.Debugf("help command received")
+	bot.SendStringMessage(text.MsgHelp, userSession.GetChatID())
 }
