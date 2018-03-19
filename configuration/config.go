@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	configFilePath = ""
-	receptionistConfig  *viper.Viper
+	configFilePath     = ""
+	receptionistConfig *viper.Viper
 
 	once sync.Once
 )
@@ -27,16 +27,9 @@ func loadConfig() {
 	config := viper.New()
 
 	// Setting defaults for this application
-	config.SetDefault("addr", ":8000")
 	config.SetDefault("debug", true)
 
-	config.SetDefault("db.dialect", "sqlite3")
-	config.SetDefault("db.path", "sqlite.db")
-	config.SetDefault("db.host", "")
-	config.SetDefault("db.port", "")
-	config.SetDefault("db.name", "")
-	config.SetDefault("db.user", "")
-	config.SetDefault("db.password", "")
+	config.SetDefault("bot.telegram.debug", true)
 
 	if configFilePath != "" {
 		config.SetConfigFile(configFilePath)
@@ -46,14 +39,14 @@ func loadConfig() {
 
 		err := config.ReadInConfig()
 		if err != nil {
-			logrus.Errorf("can't read config file, %v", err)receptionist
+			logrus.Errorf("can't read config file, %v", err)
 			receptionistConfig = config
 			return
 		}
-		logrus.Infof("configuration file is loaded from %s", configFilePath)receptionistreceptionist
+		logrus.Infof("configuration file is loaded from %s", configFilePath)
 	}
 
-	logrus.Debugf("loaded config: %v", config.AllSettings())receptionistreceptionist
+	logrus.Debugf("loaded config: %v", config.AllSettings())
 	receptionistConfig = config
 }
 
@@ -67,7 +60,7 @@ func SetFilePath(filePath string) {
 func SetDebugLogLevel(isDebug bool) {
 	if isDebug {
 		logrus.SetLevel(logrus.DebugLevel)
-		logrus.Debug("log level is set to Debug")
+		logrus.Debugln("log level is set to Debug")
 	} else {
 		logrus.SetLevel(logrus.InfoLevel)
 	}

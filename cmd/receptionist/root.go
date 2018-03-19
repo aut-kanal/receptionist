@@ -1,8 +1,8 @@
 package main
 
 import (
-	"git.cafebazaar.ir/arya/baargir/configuration"
 	"github.com/spf13/cobra"
+	"gitlab.com/kanalbot/receptionist/configuration"
 )
 
 var rootCmd = &cobra.Command{
@@ -13,19 +13,15 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	var isDebug bool
-	configFilePath := "config.yaml"
-
 	cobra.OnInitialize()
 
+	configFilePath := "config.yaml"
 	rootCmd.PersistentFlags().StringVarP(&configFilePath,
-		"Config-file", "c", configFilePath, "Path to the config file (eg ./config.toml)")
-
+		"config", "c", configFilePath, "Path to the config file (eg ./config.yaml)")
 	configuration.SetFilePath(configFilePath)
 
 	rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
-		if isDebug {
-			configuration.GetInstance().Set("debug", true)
+		if configuration.GetInstance().GetBool("debug") {
 			configuration.SetDebugLogLevel(true)
 		}
 	}
