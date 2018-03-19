@@ -17,9 +17,9 @@ func (b *Bot) AskStringQuestion(question string, userID int, chatID int64, callb
 	userSessionInterface, found := usersSessionCache.Get(getUserSessionKey(userID, chatID))
 	if !found {
 		userSession = &UserSession{
-			chatID:  chatID,
-			userID:  userID,
-			payload: make(map[string]interface{}),
+			ChatID:  chatID,
+			UserID:  userID,
+			Payload: make(map[string]interface{}),
 		}
 		usersSessionCache.Add(getUserSessionKey(userID, chatID), userSession, cache.DefaultExpiration)
 	} else {

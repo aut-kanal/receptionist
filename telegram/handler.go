@@ -8,6 +8,8 @@ import (
 
 func sessionStartHandler(userSession *miyanbor.UserSession, input interface{}) {
 	logrus.Debugf("new session started")
+
+	updateUserInfo(userSession)
 }
 
 func unknownMessageHandler(userSession *miyanbor.UserSession, input interface{}) {
@@ -20,7 +22,7 @@ func newMessageCommandHandler(userSession *miyanbor.UserSession, matches interfa
 
 func kanalCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
 	logrus.Debugf("kanal command received")
-	bot.SendStringMessage(text.MsgKanalLink, userSession.GetChatID())
+	bot.SendStringMessage(text.MsgKanalLink, userSession.ChatID)
 }
 
 func feedbackCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
@@ -29,5 +31,5 @@ func feedbackCommandHandler(userSession *miyanbor.UserSession, matches interface
 
 func helpCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
 	logrus.Debugf("help command received")
-	bot.SendStringMessage(text.MsgHelp, userSession.GetChatID())
+	bot.SendStringMessage(text.MsgHelp, userSession.ChatID)
 }

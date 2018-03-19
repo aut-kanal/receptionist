@@ -1,4 +1,9 @@
 debug: true
+
+db:
+  dialect: "sqlite3"
+  path: "kanalbot.db"
+
 bot:
   telegram:
     debug: true
