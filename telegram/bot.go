@@ -18,6 +18,7 @@ func InitBot() {
 		logrus.WithError(err).Fatalf("can't init bot")
 	}
 	logrus.Infof("telegram bot initialized completely")
+	logrus.Infof("===================================")
 
 	setCallbacks(bot)
 	bot.StartUpdater(0, botUpdaterTimeout)
@@ -26,4 +27,9 @@ func InitBot() {
 func setCallbacks(bot *miyanbor.Bot) {
 	bot.SetSessionStartCallbackHandler(sessionStartHandler)
 	bot.SetFallbackCallbackHandler(unknownMessageHandler)
+
+	bot.AddCommandHandler("^newmessage$", newMessageCommandHandler)
+	bot.AddCommandHandler("^kanal$", kanalCommandHandler)
+	bot.AddCommandHandler("^feedback$", feedbackCommandHandler)
+	bot.AddCommandHandler("^help$", helpCommandHandler)
 }
