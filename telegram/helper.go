@@ -1,10 +1,14 @@
 package telegram
 
 import (
+	"bytes"
+	"encoding/gob"
+
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/kanalbot/receptionist/db"
 	"gitlab.com/kanalbot/receptionist/db/models"
+	telegramAPI "gopkg.in/telegram-bot-api.v4"
 )
 
 func updateUserInfo(userSession *miyanbor.UserSession) {
@@ -22,4 +26,14 @@ func updateUserInfo(userSession *miyanbor.UserSession) {
 		db.GetInstance().Create(newUser)
 		logrus.WithField("user-id", newUser.UserID).Debugf("user info updated on db")
 	}
+}
+
+func encodeBinaryMessage(msg *telegramAPI.Message) []byte {
+	buf := bytes.Buffer{}
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(*msg)
+	if err != nil {
+		logrus.WithError(err).Error("can't encode binary")
+	}
+	return buf.Bytes()
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/spf13/cobra"
+	"gitlab.com/kanalbot/receptionist/mq"
 	"gitlab.com/kanalbot/receptionist/telegram"
 )
 
@@ -20,5 +21,8 @@ func init() {
 func start(cmd *cobra.Command, args []string) {
 	logVersion()
 
-	telegram.InitBot()
+	mq.InitMessageQueue()
+	defer mq.Close()
+
+	telegram.StartBot()
 }

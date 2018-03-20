@@ -7,4 +7,5 @@ const (
 	MsgNewMessageDialog        = "بگو!"
 	MsgNewMessageCaptionDialog = "برای محتوایی که فرستادی، یک متن هم انتخاب کن"
 	MsgNewMessageSuccessful    = "ردیفه! پیامت بعد از بررسی، می‌ره روی کانال"
+	MsgNewMessageError         = "مشکل براش پیش اومده کسگم. یک بار دیگه امتحان کن."
 )

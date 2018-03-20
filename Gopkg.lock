@@ -144,6 +144,12 @@
   version = "v1.0.2"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/streadway/amqp"
+  packages = ["."]
+  revision = "8e4aba63da9fc5571e01c6a45dc809a58cbc5a68"
+
+[[projects]]
   name = "github.com/technoweenie/multipartstreamer"
   packages = ["."]
   revision = "a90a01d73ae432e2611d178c18367fbaa13e0154"
@@ -192,6 +198,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7a96c27d9be69c0e19359e95ecaf3592f108dd6fca5395407b6938d2591386bf"
+  inputs-digest = "c3742f73f6a2d663c8b7e9b1f71005ff24e668fb9b58762d249d8f6b8dbdac40"
   solver-name = "gps-cdcl"
   solver-version = 1

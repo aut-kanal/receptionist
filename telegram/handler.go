@@ -3,6 +3,8 @@ package telegram
 import (
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
+	"gitlab.com/kanalbot/receptionist/mq"
 	"gitlab.com/kanalbot/receptionist/ui/text"
 	telegramAPI "gopkg.in/telegram-bot-api.v4"
 )
@@ -34,8 +36,19 @@ func newMessageContentHandler(userSession *miyanbor.UserSession, input interface
 		bot.AskStringQuestion(text.MsgNewMessageCaptionDialog,
 			userSession.UserID, userSession.ChatID, newMessageCaptionHandler)
 	} else {
-		bot.SendStringMessage(text.MsgNewMessageSuccessful, userSession.ChatID)
-		// TODO: Send content to admins
+		// Publish msg to message queue
+		err := mq.PublishMsg(&amqp.Publishing{
+			ContentType: "application/x-binary",
+			Body:        encodeBinaryMessage(msg),
+		})
+		if err != nil {
+			// Send error report
+			logrus.WithError(err).Error("can't publish msg to message queue")
+			bot.SendStringMessage(text.MsgNewMessageError, userSession.ChatID)
+		} else {
+			// Send success report
+			bot.SendStringMessage(text.MsgNewMessageSuccessful, userSession.ChatID)
+		}
 	}
 }
 

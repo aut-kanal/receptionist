@@ -11,8 +11,7 @@ var (
 	bot *miyanbor.Bot
 )
 
-// InitBot starts telegram bot's updater
-func InitBot() {
+func StartBot() {
 	botDebug := configuration.GetInstance().GetBool("bot.telegram.debug")
 	botToken := configuration.GetInstance().GetString("bot.telegram.token")
 	botSessionTimeout := configuration.GetInstance().GetInt("bot.telegram.session-timeout")
