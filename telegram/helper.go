@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/gob"
 
 	"github.com/aryahadii/miyanbor"
@@ -28,12 +29,12 @@ func updateUserInfo(userSession *miyanbor.UserSession) {
 	}
 }
 
-func encodeBinaryMessage(msg *telegramAPI.Message) []byte {
+func encodeBinaryMessage(msg *telegramAPI.Message) string {
 	buf := bytes.Buffer{}
 	enc := gob.NewEncoder(&buf)
 	err := enc.Encode(*msg)
 	if err != nil {
 		logrus.WithError(err).Error("can't encode binary")
 	}
-	return buf.Bytes()
+	return base64.StdEncoding.EncodeToString(buf.Bytes())
 }

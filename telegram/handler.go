@@ -39,7 +39,7 @@ func newMessageContentHandler(userSession *miyanbor.UserSession, input interface
 		// Publish msg to message queue
 		err := mq.PublishMsg(&amqp.Publishing{
 			ContentType: "application/x-binary",
-			Body:        encodeBinaryMessage(msg),
+			Body:        []byte(encodeBinaryMessage(msg)),
 		})
 		if err != nil {
 			// Send error report
