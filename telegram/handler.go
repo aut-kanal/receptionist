@@ -26,13 +26,16 @@ func newMessageCommandHandler(userSession *miyanbor.UserSession, matches interfa
 }
 
 func newMessageContentHandler(userSession *miyanbor.UserSession, input interface{}) {
-	msg, ok := input.(*telegramAPI.Message)
+	telegramMsg, ok := input.(*telegramAPI.Message)
 	if !ok {
 		logrus.Errorln("can't cast input content to telegram message")
 		return
 	}
+	msg := &Message{
+		Message: telegramMsg,
+	}
 
-	if isMedia(msg) {
+	if isMedia(msg.Message) {
 		encodedMsg, err := encodeBinary(msg)
 		if err != nil {
 			logrus.Error(err)
@@ -40,7 +43,7 @@ func newMessageContentHandler(userSession *miyanbor.UserSession, input interface
 		}
 		userSession.Payload["msg"] = encodedMsg
 
-		userSession.Payload["media_url"], err = getMediaURL(msg)
+		userSession.Payload["media_url"], err = getMediaURL(msg.Message)
 		if err != nil {
 			logrus.WithError(err).Error("can't get media's URL")
 			bot.SendStringMessage(text.MsgNewMessageError, userSession.ChatID)
@@ -72,13 +75,14 @@ func newMessageContentHandler(userSession *miyanbor.UserSession, input interface
 }
 
 func newMessageCaptionHandler(userSession *miyanbor.UserSession, input interface{}) {
+	lastMsg := &Message{}
+
+	// Add caption to lastMsg
 	captionMsg, ok := input.(*telegramAPI.Message)
 	if !ok {
 		logrus.Errorln("can't cast input caption to telegram message")
 		return
 	}
-
-	lastMsg := &telegramAPI.Message{}
 	err := decodeBinary(userSession.Payload["msg"].(string), lastMsg)
 	if err != nil {
 		logrus.Error(err)
@@ -86,6 +90,10 @@ func newMessageCaptionHandler(userSession *miyanbor.UserSession, input interface
 	}
 	lastMsg.Caption = captionMsg.Text
 	delete(userSession.Payload, "msg")
+
+	// Add file's URL to lastMsg
+	mediaURL, _ := getMediaURL(lastMsg.Message)
+	lastMsg.FileURL = mediaURL
 
 	// Publish msg to message queue
 	encodedMsg, err := encodeBinary(lastMsg)
@@ -100,30 +108,6 @@ func newMessageCaptionHandler(userSession *miyanbor.UserSession, input interface
 	if err != nil {
 		// Send error report
 		logrus.WithError(err).Error("can't publish msg to message queue")
-		bot.SendStringMessage(text.MsgNewMessageError, userSession.ChatID)
-		return
-	}
-
-	fileID, _ := getMediaFileID(lastMsg)
-	mediaURL, _ := getMediaURL(lastMsg)
-	media := Media{
-		FileID: fileID,
-		URL:    mediaURL,
-	}
-
-	// Publish media to URLs queue
-	encodedMsg, err = encodeBinary(media)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-	err = mq.PublishMediaURL(&amqp.Publishing{
-		ContentType: "application/x-binary",
-		Body:        []byte(encodedMsg),
-	})
-	if err != nil {
-		// Send error report
-		logrus.WithError(err).Error("can't publish media to media queue")
 		bot.SendStringMessage(text.MsgNewMessageError, userSession.ChatID)
 		return
 	}

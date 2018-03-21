@@ -11,15 +11,10 @@ var (
 	channel *amqp.Channel
 
 	qMsgs amqp.Queue
-	qURLs amqp.Queue
 )
 
 func PublishMsg(data *amqp.Publishing) error {
 	return channel.Publish("", qMsgs.Name, false, false, *data)
-}
-
-func PublishMediaURL(data *amqp.Publishing) error {
-	return channel.Publish("", qURLs.Name, false, false, *data)
 }
 
 func InitMessageQueue() {
@@ -47,18 +42,6 @@ func InitMessageQueue() {
 	)
 	if err != nil {
 		logrus.WithError(err).Fatalln("can't create messages queue")
-	}
-
-	qURLs, err = channel.QueueDeclare(
-		configuration.GetInstance().GetString("rabbit-mq.url-queue-name"), // name
-		false, // durable
-		false, // delete when unused
-		false, // exclusive
-		false, // no-wait
-		nil,   // arguments
-	)
-	if err != nil {
-		logrus.WithError(err).Fatalln("can't create URLs queue")
 	}
 
 	logrus.Info("message queue initialized")
