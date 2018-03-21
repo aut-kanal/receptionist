@@ -4,23 +4,24 @@ import (
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	"gitlab.com/kanalbot/receptionist/configuration"
 	"gitlab.com/kanalbot/receptionist/mq"
 	"gitlab.com/kanalbot/receptionist/ui/text"
 	telegramAPI "gopkg.in/telegram-bot-api.v4"
 )
 
 func sessionStartHandler(userSession *miyanbor.UserSession, input interface{}) {
-	logrus.Debugf("new session started")
+	logrus.WithField("user", *userSession).Debugf("new session started")
 
 	updateUserInfo(userSession)
 }
 
 func unknownMessageHandler(userSession *miyanbor.UserSession, input interface{}) {
-	logrus.Debugf("unknown message received, %+v", input)
+	logrus.WithField("user", *userSession).Debugf("unknown message received, %+v", input)
 }
 
 func newMessageCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
-	logrus.Debugf("newmessage command received")
+	logrus.WithField("user", *userSession).Debugf("newmessage command received")
 
 	bot.AskStringQuestion(text.MsgNewMessageDialog, userSession.UserID, userSession.ChatID, newMessageContentHandler)
 }
@@ -122,7 +123,15 @@ func kanalCommandHandler(userSession *miyanbor.UserSession, matches interface{})
 }
 
 func feedbackCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
-	logrus.Debugf("feedback command received")
+	logrus.Debugf("feedback command received, user: %v", *userSession)
+	bot.AskStringQuestion(text.MsgFeedback, userSession.UserID, userSession.ChatID, feedbackMessageHandler)
+}
+
+func feedbackMessageHandler(userSession *miyanbor.UserSession, input interface{}) {
+	adminChatID := configuration.GetInstance().GetInt64("admin-chatid")
+	feedbackMsg := input.(*telegramAPI.Message)
+	feedbackForward := telegramAPI.NewForward(adminChatID, feedbackMsg.Chat.ID, feedbackMsg.MessageID)
+	bot.Send(feedbackForward)
 }
 
 func helpCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
