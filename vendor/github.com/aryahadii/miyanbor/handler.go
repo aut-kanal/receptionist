@@ -34,12 +34,15 @@ func (b *Bot) handleNewUpdate(update *telegramAPI.Update) {
 		}
 	}
 
+	var updateHandled bool
+
 	// Find and call callback function
 	if update.CallbackQuery != nil {
 		for _, callback := range callbackQueryCallbacks {
 			if matches := callback.Pattern.FindStringSubmatch(update.CallbackQuery.Data); matches != nil {
 				callback.Function(userSession, matches)
-				return
+				updateHandled = true
+				break
 			}
 		}
 	} else if update.Message != nil {
@@ -47,28 +50,32 @@ func (b *Bot) handleNewUpdate(update *telegramAPI.Update) {
 			for _, callback := range commandsCallbacks {
 				if matches := callback.Pattern.FindStringSubmatch(update.Message.Command()); matches != nil {
 					callback.Function(userSession, matches)
+					updateHandled = true
 					break
 				}
 			}
 		} else {
 			if userSession.messageCallback != nil {
 				userSession.messageCallback(userSession, update.Message)
+				updateHandled = true
 			} else {
 				for _, callback := range messagesCallbacks {
 					if matches := callback.Pattern.FindStringSubmatch(update.Message.Text); matches != nil {
 						callback.Function(userSession, matches)
+						updateHandled = true
 						break
 					}
 				}
 			}
 		}
-		return
 	} else {
 		logrus.Errorf("unknown update")
 	}
 
 	// Call fallback callback function
-	fallbackCallbackFunction(userSession, update)
+	if !updateHandled {
+		fallbackCallbackFunction(userSession, update)
+	}
 }
 
 func getSenderChatID(update *telegramAPI.Update) (int64, error) {

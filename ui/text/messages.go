@@ -14,4 +14,6 @@ const (
 	MsgNewMessageError         = "مشکل براش پیش اومده کسگم. یک بار دیگه امتحان کن."
 
 	MsgCanceledSuccessfully = "عملیات لغو شد"
+
+	MsgUnknownInput = "ها؟!"
 )

@@ -18,6 +18,7 @@ func sessionStartHandler(userSession *miyanbor.UserSession, input interface{}) {
 
 func unknownMessageHandler(userSession *miyanbor.UserSession, input interface{}) {
 	logrus.WithField("user", *userSession).Debugf("unknown message received, %+v", input)
+	bot.SendStringMessage(text.MsgUnknownInput, userSession.ChatID)
 }
 
 func cancelCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
