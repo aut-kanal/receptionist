@@ -33,6 +33,7 @@ func setCallbacks(bot *miyanbor.Bot) {
 	bot.SetSessionStartCallbackHandler(sessionStartHandler)
 	bot.SetFallbackCallbackHandler(unknownMessageHandler)
 
+	bot.AddCommandHandler(text.CancelCommandRegex, cancelCommandHandler)
 	bot.AddCommandHandler(text.NewMessageCommandRegex, newMessageCommandHandler)
 	bot.AddCommandHandler(text.KanalCommandRegex, kanalCommandHandler)
 	bot.AddCommandHandler(text.FeedbackCommandRegex, feedbackCommandHandler)

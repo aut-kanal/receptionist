@@ -20,6 +20,12 @@ func unknownMessageHandler(userSession *miyanbor.UserSession, input interface{})
 	logrus.WithField("user", *userSession).Debugf("unknown message received, %+v", input)
 }
 
+func cancelCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
+	logrus.Debug("cancel command")
+	userSession.ResetSession()
+	bot.SendStringMessage(text.MsgCanceledSuccessfully, userSession.ChatID)
+}
+
 func newMessageCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
 	logrus.WithField("user", *userSession).Debugf("newmessage command received")
 
