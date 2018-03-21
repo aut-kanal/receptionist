@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/aryahadii/miyanbor"
   packages = ["."]
-  revision = "92b2b8ccff20dad8e49d0d8cada36ba25f60bc83"
+  revision = "87679ff44e84b08daf7e8b95703f570160082c1a"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -168,7 +168,7 @@
     "unix",
     "windows"
   ]
-  revision = "bb729a57828d76e3050e664d86aa052741ab620f"
+  revision = "c488ab1dd8481ef762f96a79a9577c27825be697"
 
 [[projects]]
   name = "golang.org/x/text"

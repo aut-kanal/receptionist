@@ -30,7 +30,7 @@ func (b *Bot) handleNewUpdate(update *telegramAPI.Update) {
 	if userSession == nil {
 		userSession = createUserSession(update)
 		if sessionStartCallbackFunction != nil {
-			sessionStartCallbackFunction(userSession, update)
+			sessionStartCallbackFunction(userSession, nil, update)
 		}
 	}
 
@@ -40,7 +40,7 @@ func (b *Bot) handleNewUpdate(update *telegramAPI.Update) {
 	if update.CallbackQuery != nil {
 		for _, callback := range callbackQueryCallbacks {
 			if matches := callback.Pattern.FindStringSubmatch(update.CallbackQuery.Data); matches != nil {
-				callback.Function(userSession, matches)
+				callback.Function(userSession, matches, update)
 				updateHandled = true
 				break
 			}
@@ -49,19 +49,19 @@ func (b *Bot) handleNewUpdate(update *telegramAPI.Update) {
 		if update.Message.IsCommand() {
 			for _, callback := range commandsCallbacks {
 				if matches := callback.Pattern.FindStringSubmatch(update.Message.Command()); matches != nil {
-					callback.Function(userSession, matches)
+					callback.Function(userSession, matches, update)
 					updateHandled = true
 					break
 				}
 			}
 		} else {
 			if userSession.messageCallback != nil {
-				userSession.messageCallback(userSession, update.Message)
+				userSession.messageCallback(userSession, nil, update)
 				updateHandled = true
 			} else {
 				for _, callback := range messagesCallbacks {
 					if matches := callback.Pattern.FindStringSubmatch(update.Message.Text); matches != nil {
-						callback.Function(userSession, matches)
+						callback.Function(userSession, matches, update)
 						updateHandled = true
 						break
 					}
@@ -74,7 +74,7 @@ func (b *Bot) handleNewUpdate(update *telegramAPI.Update) {
 
 	// Call fallback callback function
 	if !updateHandled {
-		fallbackCallbackFunction(userSession, update)
+		fallbackCallbackFunction(userSession, nil, update)
 	}
 }
 

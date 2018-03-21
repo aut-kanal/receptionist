@@ -10,35 +10,31 @@ import (
 	telegramAPI "gopkg.in/telegram-bot-api.v4"
 )
 
-func sessionStartHandler(userSession *miyanbor.UserSession, input interface{}) {
+func sessionStartHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.WithField("user", *userSession).Debugf("new session started")
 
 	updateUserInfo(userSession)
 }
 
-func unknownMessageHandler(userSession *miyanbor.UserSession, input interface{}) {
-	logrus.WithField("user", *userSession).Debugf("unknown message received, %+v", input)
+func unknownMessageHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
+	logrus.WithField("user", *userSession).Debugf("unknown message received")
 	bot.SendStringMessage(text.MsgUnknownInput, userSession.ChatID)
 }
 
-func cancelCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
+func cancelCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.Debug("cancel command")
 	userSession.ResetSession()
 	bot.SendStringMessage(text.MsgCanceledSuccessfully, userSession.ChatID)
 }
 
-func newMessageCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
+func newMessageCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.WithField("user", *userSession).Debugf("newmessage command received")
 
 	bot.AskStringQuestion(text.MsgNewMessageDialog, userSession.UserID, userSession.ChatID, newMessageContentHandler)
 }
 
-func newMessageContentHandler(userSession *miyanbor.UserSession, input interface{}) {
-	telegramMsg, ok := input.(*telegramAPI.Message)
-	if !ok {
-		logrus.Errorln("can't cast input content to telegram message")
-		return
-	}
+func newMessageContentHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
+	telegramMsg := update.(*telegramAPI.Update).Message
 	msg := &Message{
 		Message: telegramMsg,
 	}
@@ -82,15 +78,11 @@ func newMessageContentHandler(userSession *miyanbor.UserSession, input interface
 	}
 }
 
-func newMessageCaptionHandler(userSession *miyanbor.UserSession, input interface{}) {
+func newMessageCaptionHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	lastMsg := &Message{}
 
 	// Add caption to lastMsg
-	captionMsg, ok := input.(*telegramAPI.Message)
-	if !ok {
-		logrus.Errorln("can't cast input caption to telegram message")
-		return
-	}
+	captionMsg := update.(*telegramAPI.Update).Message
 	err := decodeBinary(userSession.Payload["msg"].(string), lastMsg)
 	if err != nil {
 		logrus.Error(err)
@@ -124,24 +116,24 @@ func newMessageCaptionHandler(userSession *miyanbor.UserSession, input interface
 	bot.SendStringMessage(text.MsgNewMessageSuccessful, userSession.ChatID)
 }
 
-func kanalCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
+func kanalCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.Debugf("kanal command received")
 	bot.SendStringMessage(text.MsgKanalLink, userSession.ChatID)
 }
 
-func feedbackCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
+func feedbackCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.Debugf("feedback command received, user: %v", *userSession)
 	bot.AskStringQuestion(text.MsgFeedback, userSession.UserID, userSession.ChatID, feedbackMessageHandler)
 }
 
-func feedbackMessageHandler(userSession *miyanbor.UserSession, input interface{}) {
+func feedbackMessageHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	adminChatID := configuration.GetInstance().GetInt64("admin-chatid")
-	feedbackMsg := input.(*telegramAPI.Message)
+	feedbackMsg := update.(*telegramAPI.Update).Message
 	feedbackForward := telegramAPI.NewForward(adminChatID, feedbackMsg.Chat.ID, feedbackMsg.MessageID)
 	bot.Send(feedbackForward)
 }
 
-func helpCommandHandler(userSession *miyanbor.UserSession, matches interface{}) {
+func helpCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.Debugf("help command received")
 	bot.SendStringMessage(text.MsgHelp, userSession.ChatID)
 }
