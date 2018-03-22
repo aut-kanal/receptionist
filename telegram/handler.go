@@ -18,7 +18,10 @@ func sessionStartHandler(userSession *miyanbor.UserSession, matches []string, up
 
 func unknownMessageHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.WithField("user", *userSession).Debugf("unknown message received")
-	bot.SendStringMessage(text.MsgUnknownInput, userSession.ChatID)
+	// bot.SendStringMessage(text.MsgUnknownInput, userSession.ChatID)
+	replyMsg := telegramAPI.NewMessage(userSession.ChatID, text.MsgUnknownInput)
+	replyMsg.ReplyMarkup = telegramAPI.NewRemoveKeyboard(false)
+	bot.Send(replyMsg)
 }
 
 func cancelCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {

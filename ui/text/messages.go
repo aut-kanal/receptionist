@@ -15,7 +15,7 @@ const (
 
 	MsgCanceledSuccessfully = "عملیات لغو شد"
 
-	MsgUnknownInput = "ها؟!"
+	MsgUnknownInput = "ها؟! اگر مشکلی هست از /help استفاده کن"
 
 	MsgFeedbackSent = "نظرت فرستاده شد برای آریا"
 )
