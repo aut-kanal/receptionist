@@ -130,7 +130,10 @@ func feedbackMessageHandler(userSession *miyanbor.UserSession, matches []string,
 	adminChatID := configuration.GetInstance().GetInt64("admin-chatid")
 	feedbackMsg := update.(*telegramAPI.Update).Message
 	feedbackForward := telegramAPI.NewForward(adminChatID, feedbackMsg.Chat.ID, feedbackMsg.MessageID)
-	bot.Send(feedbackForward)
+	go bot.Send(feedbackForward)
+
+	successfulSent := telegramAPI.NewMessage(userSession.ChatID, text.MsgFeedbackSent)
+	bot.Send(successfulSent)
 }
 
 func helpCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
