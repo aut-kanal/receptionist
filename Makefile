@@ -1,5 +1,5 @@
 ## Project Vars ##########################################################
-GO_VARS = ENABLE_CGO=0 GOOS=darwin GOARCH=amd64
+GO_VARS = ENABLE_CGO=0 GOOS=linux GOARCH=amd64
 GO ?= go
 GIT ?= git
 COMMIT := $(shell $(GIT) rev-parse HEAD)
@@ -14,6 +14,9 @@ DOCKER_IMAGE := registry.gitlab.com/kanalbot/receptionist
 
 receptionistd: *.go */*.go */*/*.go Gopkg.lock
 	$(GO_VARS) $(GO) build -i -o="receptionistd" -ldflags="$(LD_FLAGS)" $(ROOT)/cmd/receptionist
+
+static: *.go */*.go */*/*.go Gopkg.lock
+	$(GO_VARS) $(GO) build -a -ldflags="$(LD_FLAGS) -extldflags "-static" " -o="receptionistd" $(ROOT)/cmd/receptionist
 
 clean:
 	rm -rf receptionistd
