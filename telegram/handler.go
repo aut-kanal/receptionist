@@ -4,6 +4,7 @@ import (
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	"gitlab.com/kanalbot/ershad/models"
 	"gitlab.com/kanalbot/receptionist/configuration"
 	"gitlab.com/kanalbot/receptionist/mq"
 	"gitlab.com/kanalbot/receptionist/ui/text"
@@ -142,4 +143,26 @@ func feedbackMessageHandler(userSession *miyanbor.UserSession, matches []string,
 func helpCommandHandler(userSession *miyanbor.UserSession, matches []string, update interface{}) {
 	logrus.Debugf("help command received")
 	bot.SendStringMessage(text.MsgHelp, userSession.ChatID)
+}
+
+func acceptedMessageHandler(msg amqp.Delivery) {
+	logrus.Debug("new accepted message arrived")
+
+	// Decode message
+	decodedMsg := &models.Message{}
+	decodeBinary(string(msg.Body), decodedMsg)
+
+	reportMsg := telegramAPI.NewMessage(decodedMsg.Chat.ID, text.MsgMessageAccepted)
+	bot.Send(reportMsg)
+}
+
+func rejectedMessageHandler(msg amqp.Delivery) {
+	logrus.Debug("new rejected message arrived")
+
+	// Decode message
+	decodedMsg := &models.Message{}
+	decodeBinary(string(msg.Body), decodedMsg)
+
+	reportMsg := telegramAPI.NewMessage(decodedMsg.Chat.ID, text.MsgMessageRejected)
+	bot.Send(reportMsg)
 }

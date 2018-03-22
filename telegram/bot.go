@@ -4,6 +4,7 @@ import (
 	"github.com/aryahadii/miyanbor"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/kanalbot/receptionist/configuration"
+	"gitlab.com/kanalbot/receptionist/mq"
 	"gitlab.com/kanalbot/receptionist/ui/text"
 )
 
@@ -23,6 +24,10 @@ func StartBot() {
 		logrus.WithError(err).Fatalf("can't init bot")
 	}
 	logrus.Infof("telegram bot initialized completely")
+
+	mq.SubscribeAcceptedMsgs(acceptedMessageHandler)
+	mq.SubscribeRejectedMsgs(rejectedMessageHandler)
+
 	logrus.Infof("===================================")
 
 	setCallbacks(bot)

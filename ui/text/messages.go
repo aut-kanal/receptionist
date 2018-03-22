@@ -18,4 +18,7 @@ const (
 	MsgUnknownInput = "ها؟! اگر مشکلی هست از /help استفاده کن"
 
 	MsgFeedbackSent = "نظرت فرستاده شد برای آریا"
+
+	MsgMessageAccepted = "پیام شما تایید شد"
+	MsgMessageRejected = "متاسفانه پیام شما تایید نشد"
 )
